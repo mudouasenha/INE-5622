@@ -53,8 +53,8 @@ class GCCLexer(Lexer):
 
 
     # Numbers
-    INT_CONSTANT = r'[0-9]+'
     FLOAT_CONSTANT = r'[0-9]*(.[0-9]*)?'
+    INT_CONSTANT = r'[0-9]+'
 
     # Strings
     STRING_CONSTANT = r'[a-zA-Z\u00C0-\u00FF]+'
