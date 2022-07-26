@@ -53,17 +53,28 @@ class GCCLexer(Lexer):
 
 
     # Numbers
-    FLOAT_CONSTANT = r'[0-9]*(.[0-9]*)?'
     INT_CONSTANT = r'[0-9]+'
+    FLOAT_CONSTANT = r'[0-9]+(.[0-9]*)?'
+
 
     # Strings
-    STRING_CONSTANT = r'[a-zA-Z\u00C0-\u00FF]+'
+    STRING_CONSTANT = r'''("[^"\\]*(\\.[^"\\]*)*"|'[^'\\]*(\\.[^'\\]*)*')'''
     
     
 
     @_(r'\d+')
-    def NUMBER(self, t):
+    def INT_CONSTANT(self, t):
         t.value = int(t.value)
+        return t
+
+    @_(r'[0-9]+(.[0-9]*)?')
+    def FLOAT_CONSTANT(self, t):
+        t.value = float(t.value)
+        return t
+
+    @_(r'\"[a-zA-Z\u00C0-\u00FF]+\"')
+    def STRING_CONSTANT(self, t):
+        t.value = self.remove_quotes(t.value)
         return t
 
     @_(r'#.*')
@@ -73,6 +84,12 @@ class GCCLexer(Lexer):
     @_(r'\n+')
     def newLine(self, t):
         self.lineno = t.value.count('\n')
+    
+
+    def remove_quotes(self, text: str):
+        if text.startswith('\"') or text.startswith('\''):
+            return text[1:-1]
+        return text
         
 
 if __name__ == '__main__':
